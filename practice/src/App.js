@@ -2,8 +2,8 @@ import axios from 'axios';
 import React from 'react';
 import './App.css';
 
-import Dog from './Components/Dog';
-import BreedList from './Components/BreedList'
+import DogContainer from './Components/DogContainer';
+import DogForm from './Components/DogForm'
 
 
 class App extends React.PureComponent {
@@ -11,6 +11,7 @@ class App extends React.PureComponent {
     imageURLs: [],
     breeds: null,
     subBreeds: [],
+    number: '1',
     targetBreed: '',
     targetSubBreed: ''
   }
@@ -19,23 +20,30 @@ class App extends React.PureComponent {
     try {
       const {data} = await axios.get('https://dog.ceo/api/breeds/list/all')
       this.setState({breeds: data.message})
-      this.getDogPicture(null, null)
+      this.getDogPicture(null, null, this.state.number)
     } catch (err) {
       console.log(err)
     }
   }
 
   handleClickNewDogButton = (breed, subBreed) => {
-    this.getDogPicture(breed, subBreed)
+    this.getDogPicture(breed, subBreed, this.state.number)
   }
 
-  getDogPicture = async (breed, subBreed) => {
-    let baseURL = 'https://dog.ceo/api/breeds/image/random/10'
+  getDogPicture = async (breed, subBreed, number) => {
+    if (number > 50) {
+      number = 50
+    }
+    if (number < 1) {
+      number = 1
+    }
+
+    let baseURL = `https://dog.ceo/api/breeds/image/random/${number}`
 
     if (breed && subBreed) {
-      baseURL = `https://dog.ceo/api/breed/${breed}/${subBreed}/images/random/10`
+      baseURL = `https://dog.ceo/api/breed/${breed}/${subBreed}/images/random/${number}`
     } else if (breed) {
-      baseURL = `https://dog.ceo/api/breed/${breed}/images/random/10`
+      baseURL = `https://dog.ceo/api/breed/${breed}/images/random/${number}`
     }
     
     try {
@@ -55,22 +63,36 @@ class App extends React.PureComponent {
       targetSubBreed: ''
     }))
 
-    this.getDogPicture(breed, null)
+    this.getDogPicture(breed, null, this.state.number)
   }
 
   handleSubBreedSelectChange = subBreed => {
     this.setState({targetSubBreed: subBreed})
 
-    this.getDogPicture(this.state.targetBreed, subBreed)
+    this.getDogPicture(this.state.targetBreed, subBreed, this.state.number)
+  }
+
+  handleNumberOfDogs = number => {
+    this.setState({number: number})
+  }
+
+  handleResetButton = () => {
+    this.setState({
+      number: 1,
+      targetBreed: '',
+      targetSubBreed: ''
+    })
+  }
+
+  handleSubmit = (breed, subBreed, number) => {
+    this.getDogPicture(breed, subBreed, number)
   }
 
   //########################### RENDER #########################
   render() {
-    const allImages = this.state.imageURLs.map(url => <Dog key={url} imageURL={url}/>)
-    
     return (
       <div className="App">
-        <BreedList 
+        <DogForm 
             breeds={this.state.breeds} 
             breed={this.state.targetBreed}
             subBreeds={this.state.subBreeds}
@@ -79,10 +101,15 @@ class App extends React.PureComponent {
             handleSubBreedChange={this.handleSubBreedSelectChange}
             updateImage={this.getDogPicture}
             handleClick={this.handleClickNewDogButton} 
+            handleNumberChange={this.handleNumberOfDogs}
+            value={this.state.number}
+            handleResetButton={this.handleResetButton}
+            handleSubmitInput={this.handleSubmit}
         />
         <br />
+        <hr />
 
-        {allImages}
+        <DogContainer dogsList={this.state.imageURLs}/>
       </div>
     );
   }
