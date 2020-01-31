@@ -1,13 +1,20 @@
 import React from 'react';
 
-const Dog = props => {
-    return (
-        <img 
-            alt='Random Dog' 
-            src={props.imageURL}
-            style={{margin: '5px', height: '250px', border: '2px black solid'}}>
-        </img>
-    )
+class Dog extends React.Component {
+    componentWillMount() {
+        // this.props.handleImageLoaded('loading')
+    }
+
+    render() {
+        return (
+            <img 
+                alt='Random Dog' 
+                src={this.props.imageURL}
+                style={{margin: '5px', height: '250px', border: '2px black solid'}}
+                // onLoad={() => this.props.handleImageLoaded('finished')}
+             />
+        )
+    }
 }
 
 export default Dog

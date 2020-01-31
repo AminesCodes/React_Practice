@@ -3,7 +3,8 @@ import React from 'react';
 import './App.css';
 
 import DogContainer from './Components/DogContainer';
-import DogForm from './Components/DogForm'
+import DogForm from './Components/DogForm';
+import Spinner from './Components/Spinner'
 
 
 class App extends React.PureComponent {
@@ -13,13 +14,14 @@ class App extends React.PureComponent {
     subBreeds: [],
     number: '1',
     targetBreed: '',
-    targetSubBreed: ''
+    targetSubBreed: '',
+    breadListLoading: true
   }
 
   async componentDidMount() {
     try {
       const {data} = await axios.get('https://dog.ceo/api/breeds/list/all')
-      this.setState({breeds: data.message})
+      this.setState({breeds: data.message, breadListLoading: false})
       this.getDogPicture(null, null, this.state.number)
     } catch (err) {
       console.log(err)
@@ -88,11 +90,13 @@ class App extends React.PureComponent {
     this.getDogPicture(breed, subBreed, number)
   }
 
+
   //########################### RENDER #########################
   render() {
-    return (
-      <div className="App">
-        <DogForm 
+    let formContainer = <Spinner />
+
+    if (!this.state.breadListLoading) {
+      formContainer = <DogForm 
             breeds={this.state.breeds} 
             breed={this.state.targetBreed}
             subBreeds={this.state.subBreeds}
@@ -105,11 +109,16 @@ class App extends React.PureComponent {
             value={this.state.number}
             handleResetButton={this.handleResetButton}
             handleSubmitInput={this.handleSubmit}
-        />
+          />
+    }
+
+    return (
+      <div className="App">
+        {formContainer}
         <br />
         <hr />
 
-        <DogContainer dogsList={this.state.imageURLs}/>
+        <DogContainer dogsList={this.state.imageURLs} />
       </div>
     );
   }
