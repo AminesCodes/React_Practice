@@ -16,6 +16,7 @@ export default function Burger(props) {
                 : <h4>Please start adding ingredients</h4>
             }
             <BurgerIngredient type='bread-bottom' />
+            <h4>Total: {props.price}</h4>
         </div>
     )
 }
