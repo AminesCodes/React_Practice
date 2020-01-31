@@ -9,7 +9,7 @@ export default function BurgerIngredient(props) {
             return <div className='BreadBottom'></div>
 
         case 'bread-top':
-            return (<div className='BreadTop'>
+            return (<div className='BreadTop'> 
                         <div className='Seeds1'></div>
                         <div className='Seeds2'></div>
                     </div>)
@@ -24,7 +24,7 @@ export default function BurgerIngredient(props) {
             return <div className='Salad'></div>
 
         case 'fish':
-            return <div className='fish'></div>
+            return <div className='Fish'></div>
 
         default:
             return null;
